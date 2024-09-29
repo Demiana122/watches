@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "673071391218",
+    "project_id": "watches1",
+    "storage_bucket": "watches1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673071391218:android:04345a2b1c7d4db6648b6b",
+        "android_client_info": {
+          "package_name": "com.gammal.amigurumiartcom.gammal.amigurumiart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByxjabQbynM74gw8xaQEwtnR-EzyTzock"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

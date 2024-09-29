@@ -1,12 +1,21 @@
+import 'package:amigurumi_art/firebase_options.dart';
 import 'package:amigurumi_art/pages/home.dart';
 import 'package:amigurumi_art/pages/login.dart';
+import 'package:amigurumi_art/pages/register.dart';
 import 'package:amigurumi_art/provider/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+
+Future<void> main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+     );
+    runApp(const MyApp());
+ }
  
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -19,7 +28,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light(useMaterial3: true),
         //home: Login(),
-        home :Home(),
+        home :Register(),
       ),
     );
   }
