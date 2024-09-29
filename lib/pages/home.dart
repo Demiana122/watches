@@ -4,6 +4,7 @@ import 'package:amigurumi_art/pages/detailsscreen.dart';
 import 'package:amigurumi_art/provider/cart.dart';
 import 'package:amigurumi_art/shared/Appbar.dart';
 import 'package:amigurumi_art/shared/constcolors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -122,7 +123,9 @@ class Home extends StatelessWidget {
                   ListTile(
                       title:Text("Logout"),
                       leading:Icon(Icons.exit_to_app),
-                      onTap: () {}),
+                      onTap: () {
+                         FirebaseAuth.instance.signOut();
+                      }),
                 ],
               ),
               Container(

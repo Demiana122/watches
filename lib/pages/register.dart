@@ -20,35 +20,34 @@ class _RegisterState extends State<Register> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isPasswordHas8Character = false;
-  bool isPasswordHas1Number = false;  
+  bool isPasswordHas1Number = false;
   bool hasUppercase = false;
   bool hasLowercase = false;
   bool hasSpecialCharacter = false;
-  
+
   OnPasswordChanged(String password) {
-     isPasswordHas1Number = false;  
-     isPasswordHas8Character = false;
-     hasUppercase = false;
-     hasLowercase = false;
-     hasSpecialCharacter = false;
+    isPasswordHas1Number = false;
+    isPasswordHas8Character = false;
+    hasUppercase = false;
+    hasLowercase = false;
+    hasSpecialCharacter = false;
     setState(() {
       if (password.contains(RegExp(r'.{8,}'))) {
         isPasswordHas8Character = true;
       }
-if (password.contains(RegExp(r'[0-9]'))) {
-        isPasswordHas1Number= true;
+      if (password.contains(RegExp(r'[0-9]'))) {
+        isPasswordHas1Number = true;
       }
-if (password.contains(RegExp(r'[A-Z]'))) {
-          hasUppercase= true;
+      if (password.contains(RegExp(r'[A-Z]'))) {
+        hasUppercase = true;
       }
-  if (password.contains(RegExp(r'[a-z]'))) {
-         hasLowercase = true;
-  }
-if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-        hasSpecialCharacter= true;
-  }  
+      if (password.contains(RegExp(r'[a-z]'))) {
+        hasLowercase = true;
+      }
+      if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+        hasSpecialCharacter = true;
+      }
     });
-    
   }
 
   register() async {
@@ -82,6 +81,7 @@ if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
@@ -171,8 +171,9 @@ if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
                           width: 20,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color:
-                                isPasswordHas8Character ? Colors.green : Colors.white,
+                            color: isPasswordHas8Character
+                                ? Colors.green
+                                : Colors.white,
                             border: Border.all(
                               color: const Color.fromARGB(255, 189, 189, 189),
                             ),
@@ -199,7 +200,9 @@ if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
                           width: 20,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color:isPasswordHas1Number?Colors.green: Colors.white,
+                            color: isPasswordHas1Number
+                                ? Colors.green
+                                : Colors.white,
                             border: Border.all(
                               color: const Color.fromARGB(255, 189, 189, 189),
                             ),
@@ -226,7 +229,7 @@ if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
                           width: 20,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color:  hasUppercase?Colors.green: Colors.white,
+                            color: hasUppercase ? Colors.green : Colors.white,
                             border: Border.all(
                               color: const Color.fromARGB(255, 189, 189, 189),
                             ),
@@ -253,7 +256,7 @@ if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
                           width: 20,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color:hasLowercase? Colors.green:Colors.white,
+                            color: hasLowercase ? Colors.green : Colors.white,
                             border: Border.all(
                               color: const Color.fromARGB(255, 189, 189, 189),
                             ),
@@ -280,7 +283,9 @@ if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
                           width: 20,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color:  hasSpecialCharacter?Colors.green: Colors.white,
+                            color: hasSpecialCharacter
+                                ? Colors.green
+                                : Colors.white,
                             border: Border.all(
                               color: const Color.fromARGB(255, 189, 189, 189),
                             ),
@@ -299,6 +304,12 @@ if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           register();
+                          if (!mounted) return;
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => Login()),
+                          );
+                          //  showSnackBar(context, "Done");
                         } else {
                           showSnackBar(context, "ERROR");
                         }
@@ -335,8 +346,7 @@ if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
                             // أو إذا كنت تستخدم MaterialPageRoute:
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Login()),
+                              MaterialPageRoute(builder: (context) => Login()),
                             );
                           },
                           child: const Text(
