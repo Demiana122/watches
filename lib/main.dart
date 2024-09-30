@@ -1,7 +1,8 @@
 import 'package:amigurumi_art/firebase_options.dart';
 import 'package:amigurumi_art/pages/home.dart';
-import 'package:amigurumi_art/pages/login.dart';
 import 'package:amigurumi_art/pages/register.dart';
+import 'package:amigurumi_art/pages/signIn.dart';
+import 'package:amigurumi_art/pages/verify.dart';
 import 'package:amigurumi_art/provider/cart.dart';
 import 'package:amigurumi_art/shared/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +33,16 @@ class MyApp extends StatelessWidget {
         home: StreamBuilder(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
-if (snapshot.connectionState == ConnectionState.waiting) {return Center(child: CircularProgressIndicator(color: Colors.white,));} 
-      else if (snapshot.hasError) {return showSnackBar(context, "Something went wrong");}
-
-            else if (snapshot.hasData) {
-                return Home();
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.white,
+                ));
+              } else if (snapshot.hasError) {
+                return showSnackBar(context, "Something went wrong");
+              } else if (snapshot.hasData) {
+                //  return Home();
+                return VerifyEmailPage(); // either go to verify email or go to home
               } else {
                 return Login();
               }
