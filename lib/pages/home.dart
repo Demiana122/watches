@@ -8,20 +8,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class Home extends StatelessWidget {
- Home({super.key});
- 
+  Home({super.key});
 
   @override
   Widget build(BuildContext context) {
-     final cartt = Provider.of<Cart>(context);
+    final cartt = Provider.of<Cart>(context);
+    //final userrrs = FirebaseAuth.instance.currentUser!;
     return SafeArea(
       child: Scaffold(
         body: Padding(
-          padding:EdgeInsets.only(top: 22),
+          padding: EdgeInsets.only(top: 22),
           child: GridView.builder(
-              gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 3 / 2,
                   crossAxisSpacing: 10,
@@ -31,26 +30,26 @@ class Home extends StatelessWidget {
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Details(product:items[index]),
-          ),);
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Details(product: items[index]),
+                      ),
+                    );
                   },
                   child: GridTile(
                     footer: GridTileBar(
 // backgroundColor: Color.fromARGB(66, 73, 127, 110),
-             
-  trailing:  IconButton(
-                          color:Color.fromARGB(255, 62, 94, 70),
+
+                      trailing: IconButton(
+                          color: Color.fromARGB(255, 62, 94, 70),
                           onPressed: () {
-                             cartt.add(items[index]);
+                            cartt.add(items[index]);
                           },
-                          icon:Icon(Icons.add)),
+                          icon: Icon(Icons.add)),
 
+                      leading: Text("\$12.99"),
 
-                      leading:Text("\$12.99"),
-
-                      title:Text(
+                      title: Text(
                         "",
                       ),
                     ),
@@ -77,16 +76,18 @@ class Home extends StatelessWidget {
             children: [
               Column(
                 children: [
-                   UserAccountsDrawerHeader(
+                  UserAccountsDrawerHeader(
                     decoration: BoxDecoration(
                       image: DecorationImage(
                           image: AssetImage("assets/images/backgroud.jpg"),
+                          //  image:  NetworkImage(userrrs.photoURL!),
                           fit: BoxFit.cover),
                     ),
                     currentAccountPicture: CircleAvatar(
                         radius: 55,
-                        backgroundImage: AssetImage("assets/images/watch1.jpg")),
-                    accountEmail: Text("demianaseed@gmail.com"),
+                    backgroundImage:  AssetImage("assets/images/watch1.jpg")),
+                //  backgroundImage:  NetworkImage(userrrs.photoURL!)),
+                    accountEmail: Text("demianaseed@gmail.com"),//userrrs.displayName! or userrrs.email!
                     accountName: Text(
                       "Demiana saeed",
                       style: TextStyle(
@@ -95,42 +96,56 @@ class Home extends StatelessWidget {
                     ),
                   ),
                   ListTile(
-                      title:Text("Home"),
-                      leading:Icon(Icons.home),
+                      title: Text("Home"),
+                      leading: Icon(Icons.home),
                       onTap: () {
-                          Navigator.push(
-            context,
-          MaterialPageRoute(
-            builder: (context) => Home(),
-          ),
-                          );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Home(),
+                          ),
+                        );
                       }),
                   ListTile(
-                      title:Text("My products"),
-                      leading:Icon(Icons.add_shopping_cart),
+                      title: Text("My products"),
+                      leading: Icon(Icons.add_shopping_cart),
                       onTap: () {
-                          Navigator.push(
-            context,
-          MaterialPageRoute(
-            builder: (context) => CheckOut(),
-          )
-                          );
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CheckOut(),
+                            ));
                       }),
                   ListTile(
-                      title:Text("About"),
-                      leading:Icon(Icons.help_center),
+                      title: Text("About"),
+                      leading: Icon(Icons.help_center),
                       onTap: () {}),
-                  ListTile(
-                      title:Text("Logout"),
-                      leading:Icon(Icons.exit_to_app),
+                
+                 ListTile(
+                      title: Text("Profile Page"),
+                      leading: Icon(Icons.person),
                       onTap: () {
-                         FirebaseAuth.instance.signOut();
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => ProfilePage(),
+                        //   ),
+                        // );
+                      }),
+
+                
+                
+                  ListTile(
+                      title: Text("Logout"),
+                      leading: Icon(Icons.exit_to_app),
+                      onTap: () {
+                        FirebaseAuth.instance.signOut();
                       }),
                 ],
               ),
               Container(
-                margin:EdgeInsets.only(bottom: 12),
-                child:Text("Developed by Demiana saeed © 2024",
+                margin: EdgeInsets.only(bottom: 12),
+                child: Text("Developed by Demiana saeed © 2024",
                     style: TextStyle(fontSize: 16)),
               )
             ],
@@ -138,13 +153,10 @@ class Home extends StatelessWidget {
         ),
         appBar: AppBar(
           backgroundColor: appbarGreen,
-          actions: [
-             
-            ProductsAndPrice()
-          ],
+          actions: [ProductsAndPrice()],
           title: Text("Home"),
-  ),
-   ),
-    ); 
+        ),
+      ),
+    );
   }
 }

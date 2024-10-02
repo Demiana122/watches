@@ -4,6 +4,7 @@ import 'package:amigurumi_art/pages/signIn.dart';
 import 'package:amigurumi_art/shared/constants.dart';
 import 'package:amigurumi_art/shared/constcolors.dart';
 import 'package:amigurumi_art/shared/snackbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,10 @@ class _RegisterState extends State<Register> {
   bool isloading = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final usernameController = TextEditingController();
+  final titleController = TextEditingController();
+  final ageController = TextEditingController();
+
   bool isPasswordHas8Character = false;
   bool isPasswordHas1Number = false;
   bool hasUppercase = false;
@@ -61,6 +66,21 @@ class _RegisterState extends State<Register> {
         email: emailController.text,
         password: passwordController.text,
       );
+      print(credential.user!.uid);
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('usersss');
+
+      users
+          .doc(credential.user!.uid)
+          .set({
+            'username': usernameController.text,
+            'age': ageController.text,
+            'title': titleController.text,
+            'email': emailController.text,
+            'pass': passwordController.text
+          })
+          .then((value) => print("User Added"))
+          .catchError((error) => print("Failed to add user: $error"));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         showSnackBar(context, "The password provided is too weak.");
@@ -82,18 +102,21 @@ class _RegisterState extends State<Register> {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    ageController.dispose();
+    titleController.dispose();
+    usernameController.dispose();
     super.dispose();
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-      title: Text(
-        "Register",
+      appBar: AppBar(
+        title: Text(
+          "Register",
+        ),
+        elevation: 0,
+        backgroundColor: appbarGreen,
       ),
-      elevation: 0,
-      backgroundColor: appbarGreen,
-    ),
       backgroundColor: Colors.white,
       body: Center(
         child: Padding(
@@ -105,6 +128,7 @@ class _RegisterState extends State<Register> {
                 //mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TextField(
+                    controller: usernameController,
                     keyboardType: TextInputType.text,
                     obscureText: false,
                     decoration: decorationTextfield.copyWith(
@@ -113,7 +137,27 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   const SizedBox(
-                    height: 33,
+                    height: 22,
+                  ),
+                  TextFormField(
+                      controller: ageController,
+                      keyboardType: TextInputType.number,
+                      obscureText: false,
+                      decoration: decorationTextfield.copyWith(
+                          hintText: "Enter Your age : ",
+                          suffixIcon: Icon(Icons.pest_control_rodent))),
+                  const SizedBox(
+                    height: 22,
+                  ),
+                  TextFormField(
+                      controller: titleController,
+                      keyboardType: TextInputType.text,
+                      obscureText: false,
+                      decoration: decorationTextfield.copyWith(
+                          hintText: "Enter Your title : ",
+                          suffixIcon: Icon(Icons.person_outline))),
+                  const SizedBox(
+                    height: 22,
                   ),
                   TextFormField(
                     // we return "null" when something is valid
@@ -141,9 +185,7 @@ class _RegisterState extends State<Register> {
                     },
                     // we return "null" when something is valid
                     validator: (value) {
-                      return value!.length < 8
-                          ? "Enter at least 8 char"
-                          : null;
+                      return value!.length < 8 ? "Enter at least 8 char" : null;
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: passwordController,
@@ -290,9 +332,8 @@ class _RegisterState extends State<Register> {
                         width: 20,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: hasSpecialCharacter
-                              ? Colors.green
-                              : Colors.white,
+                          color:
+                              hasSpecialCharacter ? Colors.green : Colors.white,
                           border: Border.all(
                             color: const Color.fromARGB(255, 189, 189, 189),
                           ),

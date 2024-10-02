@@ -4,6 +4,7 @@ import 'package:amigurumi_art/pages/register.dart';
 import 'package:amigurumi_art/pages/signIn.dart';
 import 'package:amigurumi_art/pages/verify.dart';
 import 'package:amigurumi_art/provider/cart.dart';
+import 'package:amigurumi_art/provider/google_signin.dart';
 import 'package:amigurumi_art/shared/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,14 +24,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) {
-        return Cart();
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) {
+          return Cart();
+        }),
+        ChangeNotifierProvider(create: (context) {
+          return GoogleSignInProvider();
+        }),
+      ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light(useMaterial3: true),
-        home: StreamBuilder(
+          title: "myApp",
+          debugShowCheckedModeBanner: false,
+          home: StreamBuilder(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -41,14 +47,12 @@ class MyApp extends StatelessWidget {
               } else if (snapshot.hasError) {
                 return showSnackBar(context, "Something went wrong");
               } else if (snapshot.hasData) {
-                //  return Home();
-                return VerifyEmailPage(); // either go to verify email or go to home
+                return Home(); //VerifyEmailPage(); // home() OR verify email
               } else {
                 return Login();
               }
-            }),
-      ),
-      //home :Register(),
+            },
+          )),
     );
   }
 }
