@@ -18,20 +18,14 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool isvisible = false;
+  bool isloading = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   signIn() async {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: const Color.fromARGB(255, 184, 181, 181),
-            ),
-          );
-        });
-
+    setState(() {
+      isloading = true;
+    });
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
@@ -42,8 +36,9 @@ class _LoginState extends State<Login> {
       showSnackBar(context, "Error :${e.code}");
     }
     //stop progress indicator
-    if (!mounted) return;
-    Navigator.pop(context);
+    setState(() {
+      isloading = false;
+    });
   }
 
   @override
@@ -152,13 +147,17 @@ class _LoginState extends State<Login> {
                           MaterialPageRoute(builder: (context) => Register()),
                         );
                       },
-                      child: const Text(
-                        'SIGN UP',
-                        style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          fontSize: 20,
-                        ),
-                      ),
+                      child: isloading
+                          ? CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : const Text(
+                              'SIGN UP',
+                              style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                fontSize: 20,
+                              ),
+                            ),
                     ),
                   ],
                 ),

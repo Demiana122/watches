@@ -1,5 +1,7 @@
 // ignore_for_file: use_super_parameters
 
+import 'dart:math';
+
 import 'package:amigurumi_art/pages/signIn.dart';
 import 'package:amigurumi_art/shared/constants.dart';
 import 'package:amigurumi_art/shared/constcolors.dart';
@@ -7,6 +9,10 @@ import 'package:amigurumi_art/shared/snackbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' show basename;
 
 class Register extends StatefulWidget {
   Register({super.key});
@@ -17,6 +23,8 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   bool isvisible = true;
+  File? imgPath;
+  String? imgName;
   final _formKey = GlobalKey<FormState>();
   bool isloading = false;
   final emailController = TextEditingController();
@@ -30,6 +38,87 @@ class _RegisterState extends State<Register> {
   bool hasUppercase = false;
   bool hasLowercase = false;
   bool hasSpecialCharacter = false;
+
+  uploadImageToScreen(ImageSource sourcee) async {
+    final pickedImg = await ImagePicker().pickImage(source: sourcee);
+    try {
+      if (pickedImg != null) {
+        setState(() {
+          imgPath = File(pickedImg.path);
+          imgName = basename(pickedImg.path);
+          int random = Random().nextInt(9999999);
+          imgName = "$random$imgName";
+          print(imgName);
+        });
+      } else {
+        print("NO img selected");
+      }
+    } catch (e) {
+      print("Error => $e");
+    }
+    if (!mounted) return;
+    Navigator.pop(context);
+  }
+
+  showModel() {
+    return showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            padding: EdgeInsets.all(22),
+            height: 170,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    await uploadImageToScreen(ImageSource.camera);
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.camera,
+                      ),
+                      SizedBox(
+                        width: 11,
+                      ),
+                      Text("From camera"),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 22,
+                ),
+
+                GestureDetector(
+                  onTap: () async {
+                    await uploadImageToScreen(ImageSource.gallery);
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.photo_outlined),
+                      SizedBox(
+                        width: 11,
+                      ),
+                      Text("From gallery")
+                    ],
+                  ),
+                ),
+
+                // TextButton(
+                //     onPressed: () {
+                //       Navigator.pop(context);
+                //     },
+                // child: Text(
+                //   "Cancel",
+                //   style: TextStyle(fontSize: 22),
+                // ))
+              ],
+            ),
+          );
+        },
+        isScrollControlled: true);
+  }
 
   OnPasswordChanged(String password) {
     isPasswordHas1Number = false;
@@ -66,6 +155,12 @@ class _RegisterState extends State<Register> {
         email: emailController.text,
         password: passwordController.text,
       );
+
+      // Upload image to firebase storage
+      final storageRef = FirebaseStorage.instance.ref("users_images/$imgName");
+      await storageRef.putFile(imgPath!);
+      String url = await storageRef.getDownloadURL();
+
       print(credential.user!.uid);
       CollectionReference users =
           FirebaseFirestore.instance.collection('usersss');
@@ -73,11 +168,12 @@ class _RegisterState extends State<Register> {
       users
           .doc(credential.user!.uid)
           .set({
-            'username': usernameController.text,
-            'age': ageController.text,
-            'title': titleController.text,
-            'email': emailController.text,
-            'pass': passwordController.text
+            "imglink": url,
+            "username": usernameController.text,
+            "age": ageController.text,
+            "title": titleController.text,
+            "email": emailController.text,
+            "pass": passwordController.text
           })
           .then((value) => print("User Added"))
           .catchError((error) => print("Failed to add user: $error"));
@@ -127,6 +223,47 @@ class _RegisterState extends State<Register> {
               child: Column(
                 //mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromARGB(125, 78, 91, 110),
+                    ),
+                    child: Stack(
+                      children: [
+                        imgPath == null
+                            ? CircleAvatar(
+                                backgroundColor:
+                                    Color.fromARGB(255, 255, 255, 255),
+                                backgroundImage:
+                                    AssetImage("assets/images/watch1.jpg"),
+                                radius: 77,
+                              )
+                            : ClipOval(
+                                child: Image.file(
+                                  imgPath!,
+                                  width: 145,
+                                  height: 145,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                        Positioned(
+                          left: 95,
+                          bottom: -10,
+                          child: IconButton(
+                            onPressed: () {
+                              showModel();
+                            },
+                            icon: Icon(Icons.add_a_photo),
+                            color: Color.fromARGB(255, 94, 115, 126),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 33,
+                  ),
                   TextField(
                     controller: usernameController,
                     keyboardType: TextInputType.text,
@@ -350,7 +487,9 @@ class _RegisterState extends State<Register> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                      if (_formKey.currentState!.validate() &&
+                          imgName != null &&
+                          imgPath != null) {
                         register();
                         if (!mounted) return;
                         Navigator.pushReplacement(
