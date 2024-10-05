@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'package:amigurumi_art/shared/constcolors.dart';
 import 'package:amigurumi_art/shared/data_from_firestore.dart';
+import 'package:amigurumi_art/shared/user_image_from_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -87,13 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Stack(
                     children: [
                       imgPath == null
-                          ? CircleAvatar(
-                              backgroundColor:
-                                  Color.fromARGB(255, 255, 255, 255),
-                              backgroundImage:
-                                  AssetImage("assets/images/watch1.jpg"),
-                              radius: 77,
-                            )
+                          ? ImageUser()
                           : ClipOval(
                               child: Image.file(
                                 imgPath!,

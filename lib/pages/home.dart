@@ -4,6 +4,7 @@ import 'package:amigurumi_art/pages/detailsscreen.dart';
 import 'package:amigurumi_art/provider/cart.dart';
 import 'package:amigurumi_art/shared/Appbar.dart';
 import 'package:amigurumi_art/shared/constcolors.dart';
+import 'package:amigurumi_art/shared/user_image_from_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -83,9 +84,7 @@ class Home extends StatelessWidget {
                           //  image:  NetworkImage(userrrs.photoURL!),
                           fit: BoxFit.cover),
                     ),
-                    currentAccountPicture: CircleAvatar(
-                        radius: 55,
-                    backgroundImage:  AssetImage("assets/images/watch1.jpg")),
+                    currentAccountPicture:  ImageUser(),
                 //  backgroundImage:  NetworkImage(userrrs.photoURL!)),
                     accountEmail: Text("demianaseed@gmail.com"),//userrrs.displayName! or userrrs.email!
                     accountName: Text(
